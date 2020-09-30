@@ -6,12 +6,12 @@
 		<title>Zoom name tag</title>
 	</head>
 	<body>
-		<h1>Zoom Background name tag</h1>
+		<h1>Zoom Background Name Tag</h1>
 
 		<div>
 			Name : <input type="text" id="name-input" />
 			<a id="download" download="TPS-Zoom-background.jpg">
-				<button type="button" onclick="download()">Save</button>
+				<button type="button" onclick="download()">Download</button>
 			</a>
 		</div>
 		<div>
@@ -24,8 +24,13 @@
 			padding: 1em;
 			font-family: Arial, Helvetica, sans-serif;
 		}
+
 		div {
 			margin-bottom: 1em;
+		}
+
+		a button:hover {
+			cursor: pointer;
 		}
 	</style>
 	<script type="text/javascript">
