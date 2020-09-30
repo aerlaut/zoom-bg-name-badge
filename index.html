@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Zoom name tag</title>
+	</head>
+	<body>
+		<h1>Zoom Background name tag</h1>
+
+		<div>
+			Name : <input type="text" id="name-input" />
+			<a id="download" download="TPS-Zoom-background.jpg">
+				<button type="button" onclick="download()">Save</button>
+			</a>
+		</div>
+		<div>
+			<canvas id="canvas">Your browser does not support canvas</canvas>
+		</div>
+	</body>
+	<style>
+		body {
+			margin: 0;
+			padding: 1em;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		div {
+			margin-bottom: 1em;
+		}
+	</style>
+	<script type="text/javascript">
+		document.getElementById('name-input').addEventListener('change', (e) => {
+			drawBadge()
+			writeName(e.target.value)
+		})
+
+		const canvas = document.getElementById('canvas')
+		const ctx = canvas.getContext('2d')
+
+		// Set width height
+		canvas.width = 1920
+		canvas.height = 1080
+
+		// Draw image into canvas
+		let img = new Image()
+		img.src = 'bg.jpg'
+
+		img.onload = function () {
+			ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+			drawBadge()
+		}
+
+		// Draw badge
+		function drawBadge() {
+			// Badge settings
+			let badge = {
+				marginLeft: 50,
+				marginTop: 70,
+				width: 500,
+				height: 150,
+				rounded: 5,
+			}
+
+			ctx.beginPath()
+			ctx.moveTo(badge.marginLeft + badge.width, badge.marginTop + badge.height)
+			ctx.arcTo(
+				badge.marginLeft,
+				badge.marginTop + badge.height,
+				badge.marginLeft,
+				badge.marginTop,
+				badge.rounded
+			)
+			ctx.arcTo(
+				badge.marginLeft,
+				badge.marginTop,
+				badge.marginLeft + badge.width,
+				badge.marginTop,
+				badge.rounded
+			)
+			ctx.arcTo(
+				badge.marginLeft + badge.width,
+				badge.marginTop,
+				badge.marginLeft + badge.width,
+				badge.marginTop + badge.height,
+				badge.rounded
+			)
+			ctx.arcTo(
+				badge.marginLeft + badge.width,
+				badge.marginTop + badge.height,
+				badge.marginLeft,
+				badge.marginTop + badge.height,
+				badge.rounded
+			)
+			ctx.fillStyle = 'white'
+			ctx.fill()
+		}
+
+		// Insert name on badge
+		function writeName(name) {
+			text = {
+				font: 'bold 120px Arial',
+				width: '',
+				color: 'black',
+				startX: 70,
+				startY: 180,
+			}
+
+			ctx.fillStyle = text.color
+			ctx.font = text.font
+			ctx.fillText(name, text.startX, text.startY)
+		}
+
+		// Download
+		function download() {
+			let download = document.getElementById('download')
+			let image = canvas
+				.toDataURL('image/png')
+				.replace('image/png', 'image/octet-stream')
+			download.setAttribute('href', image)
+		}
+	</script>
+</html>
