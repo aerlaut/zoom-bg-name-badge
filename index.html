@@ -3,20 +3,20 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Zoom name tag</title>
+		<title>Tagify Zoom Background</title>
 	</head>
 	<body>
 		<h1>Zoom Background Name Tag</h1>
 
 		<div>
 			Name : <input type="text" id="name-input" />
+			<button id="save">Save</button>
 			<a id="download" download="TPS-Zoom-background.jpg">
 				<button type="button" onclick="download()">Download</button>
 			</a>
 		</div>
-		<div>
-			<canvas id="canvas">Your browser does not support canvas</canvas>
-		</div>
+		<canvas id="preview">Your browser does not support canvas</canvas>
+		<canvas id="canvas"></canvas>
 	</body>
 	<style>
 		body {
@@ -34,9 +34,11 @@
 		}
 	</style>
 	<script type="text/javascript">
-		document.getElementById('name-input').addEventListener('change', (e) => {
+		document.getElementById('save').addEventListener('click', () => {
 			drawBadge()
-			writeName(e.target.value)
+			let name = document.getElementById('name-input').value
+			console.log(name)
+			writeName(name)
 		})
 
 		const canvas = document.getElementById('canvas')
@@ -52,7 +54,6 @@
 
 		img.onload = function () {
 			ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-
 			drawBadge()
 		}
 
