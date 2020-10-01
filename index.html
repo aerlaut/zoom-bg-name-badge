@@ -59,14 +59,14 @@
 		canvas.width = 1920
 		canvas.height = 1080
 
+		const img = new Image()
+
 		// Listen for file upload
 		document.getElementById('bg-upload').addEventListener('change', (e) => {
 			const reader = new FileReader()
-			const img = new Image()
 
 			reader.onload = (e) => {
 				img.src = e.target.result
-
 				img.onload = (e) => {
 					drawBackground(img, preview)
 					drawBackground(img, canvas)
@@ -79,6 +79,8 @@
 		// Add event listener to clicks
 		document.getElementById('save').addEventListener('click', () => {
 			// Reload background
+			drawBackground(img, preview)
+			drawBackground(img, canvas)
 
 			// Write name to canvas
 			let name = document.getElementById('name-input').value
