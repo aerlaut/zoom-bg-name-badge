@@ -9,20 +9,35 @@
 		<h1>Zoom Background Name Tag</h1>
 
 		<div>
+			Upload image : <input type="file" id="bg-upload" /> (Recommended
+			resolution : 1920 x 1080 px)
+		</div>
+		<div>
 			Name : <input type="text" id="name-input" />
 			<button id="save">Save</button>
 			<a id="download" download="TPS-Zoom-background.jpg">
 				<button type="button" onclick="download()">Download</button>
 			</a>
 		</div>
-		<canvas id="preview">Your browser does not support canvas</canvas>
-		<canvas id="canvas"></canvas>
+		<canvas id="preview" width="800" height="450"
+			>Your browser does not support canvas</canvas
+		>
+		<canvas id="canvas" width="1920" height="1080"></canvas>
 	</body>
 	<style>
+		#canvas {
+			display: none;
+		}
 		body {
 			margin: 0;
 			padding: 1em;
 			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		input {
+			padding: 0.25em 0.5em;
+			border: 1px solid black;
+			border-radius: 0.5em;
 		}
 
 		div {
@@ -34,31 +49,47 @@
 		}
 	</style>
 	<script type="text/javascript">
-		document.getElementById('save').addEventListener('click', () => {
-			drawBadge()
-			let name = document.getElementById('name-input').value
-			console.log(name)
-			writeName(name)
-		})
+		let preview = document.getElementById('preview')
+		preview = preview.getContext('2d')
+		preview.width = 800
+		preview.height = 450
 
-		const canvas = document.getElementById('canvas')
-		const ctx = canvas.getContext('2d')
-
-		// Set width height
+		let doc = document.getElementById('canvas')
+		canvas = doc.getContext('2d')
 		canvas.width = 1920
 		canvas.height = 1080
 
+		// Listen for file upload
+		document.getElementById('bg-upload').addEventListener('change', (e) => {
+			const reader = new FileReader()
+			const img = new Image()
+
+			reader.onload = (e) => {
+				img.src = e.target.result
+
+				img.onload = (e) => {
+					drawBackground(img, preview)
+					drawBackground(img, canvas)
+				}
+			}
+
+			reader.readAsDataURL(e.target.files[0])
+		})
+
+		// Add event listener to clicks
+		document.getElementById('save').addEventListener('click', () => {
+			// Reload background
+
+			// Write name to canvas
+			let name = document.getElementById('name-input').value
+			writeName(name, preview)
+			writeName(name, canvas)
+		})
+
 		// Draw image into canvas
-		let img = new Image()
-		img.src = 'bg.jpg'
+		function drawBackground(img, context) {
+			context.drawImage(img, 0, 0, context.width, context.height)
 
-		img.onload = function () {
-			ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-			drawBadge()
-		}
-
-		// Draw badge
-		function drawBadge() {
 			// Badge settings
 			let badge = {
 				marginLeft: 50,
@@ -68,42 +99,55 @@
 				rounded: 5,
 			}
 
-			ctx.beginPath()
-			ctx.moveTo(badge.marginLeft + badge.width, badge.marginTop + badge.height)
-			ctx.arcTo(
+			if (context.canvas.id == 'preview') {
+				badge = {
+					marginLeft: 22,
+					marginTop: 30,
+					width: 200,
+					height: 60,
+					rounded: 2,
+				}
+			}
+
+			context.beginPath()
+			context.moveTo(
+				badge.marginLeft + badge.width,
+				badge.marginTop + badge.height
+			)
+			context.arcTo(
 				badge.marginLeft,
 				badge.marginTop + badge.height,
 				badge.marginLeft,
 				badge.marginTop,
 				badge.rounded
 			)
-			ctx.arcTo(
+			context.arcTo(
 				badge.marginLeft,
 				badge.marginTop,
 				badge.marginLeft + badge.width,
 				badge.marginTop,
 				badge.rounded
 			)
-			ctx.arcTo(
+			context.arcTo(
 				badge.marginLeft + badge.width,
 				badge.marginTop,
 				badge.marginLeft + badge.width,
 				badge.marginTop + badge.height,
 				badge.rounded
 			)
-			ctx.arcTo(
+			context.arcTo(
 				badge.marginLeft + badge.width,
 				badge.marginTop + badge.height,
 				badge.marginLeft,
 				badge.marginTop + badge.height,
 				badge.rounded
 			)
-			ctx.fillStyle = 'white'
-			ctx.fill()
+			context.fillStyle = 'white'
+			context.fill()
 		}
 
 		// Insert name on badge
-		function writeName(name) {
+		function writeName(name, context) {
 			text = {
 				font: 'bold 120px Arial',
 				width: '',
@@ -112,15 +156,21 @@
 				startY: 180,
 			}
 
-			ctx.fillStyle = text.color
-			ctx.font = text.font
-			ctx.fillText(name, text.startX, text.startY)
+			if (context.canvas.id == 'preview') {
+				text.font = 'bold 48px Arial'
+				text.startX = 30
+				text.startY = 75
+			}
+
+			context.fillStyle = text.color
+			context.font = text.font
+			context.fillText(name, text.startX, text.startY)
 		}
 
 		// Download
 		function download() {
 			let download = document.getElementById('download')
-			let image = canvas
+			let image = doc
 				.toDataURL('image/png')
 				.replace('image/png', 'image/octet-stream')
 			download.setAttribute('href', image)
