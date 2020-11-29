@@ -162,7 +162,7 @@ function download() {
 function upload(imgData) {
 
   // POST formData to endpoint
-  return fetch('http://localhost:3000', {
+  return fetch('http://localhost:3000/upload', {
     method: 'POST',
     mode: 'cors',
     credentials: 'same-origin',
