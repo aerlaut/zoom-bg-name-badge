@@ -1,14 +1,23 @@
+//== Setup document elements ==//
+// Get preview
 let preview = document.getElementById('preview')
 preview = preview.getContext('2d')
 preview.width = 800
 preview.height = 450
 
+// Get canvas
 let doc = document.getElementById('canvas')
 canvas = doc.getContext('2d')
 canvas.width = 1920
 canvas.height = 1080
 
+// Create image object
 const img = new Image()
+
+// Create global formData object
+const formData = new FormData()
+
+//== Register event listeners ==//
 
 // Listen for file upload
 document.getElementById('bg-upload').addEventListener('change', (e) => {
@@ -23,10 +32,13 @@ document.getElementById('bg-upload').addEventListener('change', (e) => {
   }
 
   reader.readAsDataURL(e.target.files[0])
+
+  // Add file to formdata
+  formData.append('img', e.target.files[0])
 })
 
-// Add event listener to clicks
-document.getElementById('write').addEventListener('click', () => {
+// Add event listener to write name button
+document.getElementById('write-name').addEventListener('click', () => {
   // Reload background
   drawBackground(img, preview)
   drawBackground(img, canvas)
@@ -37,6 +49,25 @@ document.getElementById('write').addEventListener('click', () => {
   writeName(name, canvas)
 })
 
+// Add event listener to save button
+document.getElementById('save-image').addEventListener('click', () => {
+
+  // TODO : Spinner when uploading
+  upload(formData)
+  .then(res => res.json())
+  .then(res => {
+    // TODO : Check if image is successfully uploaded
+    // TODO : Remove spinner when done uploading
+  })
+  .catch(e => {
+
+    // TODO : Handle error
+    console.log(e)
+  })
+
+})
+
+//== Functions ==//
 // Draw image into canvas
 function drawBackground(img, context) {
   context.drawImage(img, 0, 0, context.width, context.height)
@@ -118,11 +149,24 @@ function writeName(name, context) {
   context.fillText(name, text.startX, text.startY)
 }
 
-// Download
+// Download new image
 function download() {
   let download = document.getElementById('download')
   let image = doc
     .toDataURL('image/png')
     .replace('image/png', 'image/octet-stream')
   download.setAttribute('href', image)
+}
+
+// Upload new image and save
+function upload(imgData) {
+
+  // POST formData to endpoint
+  return fetch('http://localhost:3000', {
+    method: 'POST',
+    mode: 'cors',
+    credentials: 'same-origin',
+    body: imgData
+  })
+
 }
