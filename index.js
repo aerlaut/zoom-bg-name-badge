@@ -25,13 +25,16 @@ mongoose.connect(`mongodb://${db_user}:${db_pass}@${db_host}:${db_port}/${db_nam
 
 // Serve front page
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, + "/public/index.html"))
+  res.sendFile(path.join(__dirname, "/public/index.html"))
 })
 
-
-// Fetch image shared by URL
+// Fetch image shared by URL, later calling callback
 app.get("/share/:imgid", (req, res) => {
 
+  res.sendFile(path.join(__dirname, "/public/index.html"))
+})
+
+app.get("/i/:imgid", (req, res) => {
   // Get data from database
   Img.findOneAndUpdate({ url: req.params.imgid },
                        { $inc : { views : 1 } },

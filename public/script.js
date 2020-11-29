@@ -11,10 +11,13 @@ canvas = doc.getContext('2d')
 canvas.width = 1920
 canvas.height = 1080
 
+// Get upload image part
+const uploadForm = document.getElementById('upload-image')
+
 // Get loading elements
 const loading = document.getElementById('spinner')
 const uploadStatus = document.getElementById('upload-status')
-const imgURL = document.getElementsById('imgURL')
+const imgURL = document.getElementById('imgURL')
 
 // Create image object
 const img = new Image()
@@ -22,21 +25,41 @@ const img = new Image()
 // Create global formData object
 const formData = new FormData()
 
+//== If page comes from shared, use shared image ==/
+const shared = /\/share\/([\d\w]{6,7})/i
+let imgid = location.pathname.match(shared)[1]
+
+// If come from shared
+if(imgid != null) {
+  uploadForm.classList.add('hidden')
+
+  fetch(`http://localhost:3000/i/${imgid}`)
+  .then(res => res.json())
+  .then(res => {
+    if (res.status != 'OK') console.log(res.msg)
+
+    fetch(`http://localhost:3000/${res.filename}`)
+    .then(res => res.blob())
+    .then(blob => {
+      readImageSource(blob)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
+
 //== Register event listeners ==//
 
 // Listen for file upload
 document.getElementById('bg-upload').addEventListener('change', (e) => {
-  const reader = new FileReader()
 
-  reader.onload = (e) => {
-    img.src = e.target.result
-    img.onload = (e) => {
-      drawBackground(img, preview)
-      drawBackground(img, canvas)
-    }
-  }
-
-  reader.readAsDataURL(e.target.files[0])
+  readImageSource(e.target.files[0])
 
   // Add file to formdata
   formData.append('img', e.target.files[0])
@@ -79,6 +102,21 @@ document.getElementById('save-image').addEventListener('click', () => {
 })
 
 //== Functions ==//
+// Read image from source
+function readImageSource(file) {
+  let reader = new FileReader()
+
+  reader.onload = (e) => {
+    img.src = e.target.result
+    img.onload = (e) => {
+      drawBackground(img, preview)
+      drawBackground(img, canvas)
+    }
+  }
+
+  reader.readAsDataURL(file)
+}
+
 // Draw image into canvas
 function drawBackground(img, context) {
   context.drawImage(img, 0, 0, context.width, context.height)
