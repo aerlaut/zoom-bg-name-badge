@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 })
 
 // Fetch image shared by URL, later calling callback
-app.get("/share/:imgid", (req, res) => {
+app.get("/bg/:imgid", (req, res) => {
 
   res.sendFile(path.join(__dirname, "/public/index.html"))
 })

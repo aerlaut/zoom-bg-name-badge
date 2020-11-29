@@ -26,14 +26,14 @@ const img = new Image()
 const formData = new FormData()
 
 //== If page comes from shared, use shared image ==/
-const shared = /\/share\/([\d\w]{6,7})/i
-let imgid = location.pathname.match(shared)[1]
+const shared = /\/bg\/([\d\w]{6,7})/i
+let imgid = location.pathname.match(shared)
 
 // If come from shared
 if(imgid != null) {
   uploadForm.classList.add('hidden')
 
-  fetch(`http://localhost:3000/i/${imgid}`)
+  fetch(`http://localhost:3000/i/${imgid[1]}`)
   .then(res => res.json())
   .then(res => {
     if (res.status != 'OK') console.log(res.msg)
@@ -89,8 +89,9 @@ document.getElementById('save-image').addEventListener('click', () => {
   .then(res => {
 
     if(res.status != 'OK')
+    console.log(res)
 
-    imgURL.textContent = res.msg
+    imgURL.textContent = `zoombg.aerlaut.com/bg/${res.msg}`
     spinner.classList.toggle('hidden')
   })
   .catch(e => {
@@ -213,8 +214,6 @@ function upload(imgData) {
   // POST formData to endpoint
   return fetch('http://localhost:3000/upload', {
     method: 'POST',
-    mode: 'cors',
-    credentials: 'same-origin',
     body: imgData
   })
 
