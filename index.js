@@ -1,12 +1,34 @@
 const express = require('express')
 const path = require('path')
 const multer = require('multer')
+const cryptoRandomString = require('crypto-random-string')
+const mongoose = require('mongoose')
+const ImgSchema = require('./ImgSchema.js')
+const Img = mongoose.model('image', ImgSchema);
 
 require('dotenv').config()
 
+// Create app
 const app = express()
 const port = process.env.SERVER_PORT
 const host = process.env.SERVER_HOST
+const db_user = process.env.DB_USER
+const db_pass = process.env.DB_PASS
+const db_host = process.env.DB_HOST
+const db_port = process.env.DB_PORT
+const db_name = process.env.DB_NAME
+app.use(express.static('public'))
+app.use(express.static('imgs'))
+
+// Connect to database
+mongoose.connect(`mongodb://${db_user}:${db_pass}@${db_host}:${db_port}/${db_name}?authSource=admin&ssl=false`)
+
+// Serve front page
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, + "/public/index.html"))
+})
+
+// Listen to POST requests
 const upload = multer({
   dest: 'imgs/',
   fileFilter: (req, file, cb) => {
@@ -22,14 +44,6 @@ const upload = multer({
   }
 }).single('img')
 
-app.use(express.static('public'))
-
-// Serve front page
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, + "/public/index.html"))
-})
-
-// Listen to POST requests
 app.post("/upload", (req, res) => {
 
   // Check for upload errors
@@ -38,11 +52,21 @@ app.post("/upload", (req, res) => {
       res.status(500).json({ msg : err })
     } else {
 
-        // TODO : Save filename in database
+        // Generate unique URL
+        let imgUrl = cryptoRandomString({length: 10, type: 'alphanumeric'})
 
-        // Error success, return url for filename
-        res.json({
-          msg: 'test',
+        // Save file in database
+        let newImg = { url : imgUrl,
+                        filename : req.file.filename
+                      }
+
+        Img.create(newImg, function(err) {
+          if (err) res.status(500).json({ msg : err })
+
+          // Success, return url for filename
+          res.json({
+            msg: newImg.url,
+          })
         })
     }
   })
