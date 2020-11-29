@@ -4,6 +4,7 @@
   "description": "Share Zoom background",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/aerlaut/zoom-bg-name-badge/issues"
   },
-  "homepage": "https://github.com/aerlaut/zoom-bg-name-badge#readme"
+  "homepage": "https://github.com/aerlaut/zoom-bg-name-badge#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  }
 }
