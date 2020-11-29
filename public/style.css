@@ -1,0 +1,28 @@
+#canvas {
+	display: none;
+}
+body {
+	margin: 0;
+	padding: 1em;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#write {
+	cursor: pointer;
+}
+#name-input {
+	width: 4em;
+}
+input {
+	padding: 0.25em 0.5em;
+	border: 1px solid black;
+	border-radius: 0.5em;
+}
+
+div {
+	margin-bottom: 1em;
+}
+
+a button:hover {
+	cursor: pointer;
+}
