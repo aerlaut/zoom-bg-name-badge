@@ -11,10 +11,9 @@ canvas = doc.getContext('2d')
 canvas.width = 1920
 canvas.height = 1080
 
-// Get spinner
+// Get loading elements
 const loading = document.getElementById('spinner')
-
-// Get imgURL container
+const uploadStatus = document.getElementById('upload-status')
 const imgURL = document.getElementsById('imgURL')
 
 // Create image object
@@ -59,6 +58,7 @@ document.getElementById('write-name').addEventListener('click', () => {
 document.getElementById('save-image').addEventListener('click', () => {
 
   // Show spinner
+  uploadStatus.classList.remove('hidden')
   spinner.classList.toggle('hidden')
 
   upload(formData)

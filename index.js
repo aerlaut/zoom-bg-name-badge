@@ -28,7 +28,25 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, + "/public/index.html"))
 })
 
-// Listen to POST requests
+
+// Fetch image shared by URL
+app.get("/share/:imgid", (req, res) => {
+
+  // Get data from database
+  Img.findOneAndUpdate({ url: req.params.imgid },
+                       { $inc : { views : 1 } },
+                       { projection : { filename : 1 } },
+                       (err, doc) => {
+                          if(err) res.status(500).json({ msg : err })
+                          res.json({
+                            status: 'OK',
+                            filename : doc.filename
+                          })
+                       })
+
+})
+
+// Listen for save images
 const upload = multer({
   dest: 'imgs/',
   fileFilter: (req, file, cb) => {
@@ -47,7 +65,7 @@ const upload = multer({
 app.post("/upload", (req, res) => {
 
   // Check for upload errors
-  upload(req, res, function(err) {
+  upload(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       res.status(500).json({ msg : err })
     } else {
@@ -60,11 +78,12 @@ app.post("/upload", (req, res) => {
                         filename : req.file.filename
                       }
 
-        Img.create(newImg, function(err) {
+        Img.create(newImg, (err) => {
           if (err) res.status(500).json({ msg : err })
 
           // Success, return url for filename
           res.json({
+            status: 'OK',
             msg: newImg.url,
           })
         })
