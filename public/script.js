@@ -11,6 +11,12 @@ canvas = doc.getContext('2d')
 canvas.width = 1920
 canvas.height = 1080
 
+// Get spinner
+const loading = document.getElementById('spinner')
+
+// Get imgURL container
+const imgURL = document.getElementsById('imgURL')
+
 // Create image object
 const img = new Image()
 
@@ -52,12 +58,17 @@ document.getElementById('write-name').addEventListener('click', () => {
 // Add event listener to save button
 document.getElementById('save-image').addEventListener('click', () => {
 
-  // TODO : Spinner when uploading
+  // Show spinner
+  spinner.classList.toggle('hidden')
+
   upload(formData)
   .then(res => res.json())
   .then(res => {
-    // TODO : Check if image is successfully uploaded
-    // TODO : Remove spinner when done uploading
+
+    if(res.status != 'OK')
+
+    imgURL.textContent = res.msg
+    spinner.classList.toggle('hidden')
   })
   .catch(e => {
 

@@ -53,7 +53,7 @@ app.post("/upload", (req, res) => {
     } else {
 
         // Generate unique URL
-        let imgUrl = cryptoRandomString({length: 10, type: 'alphanumeric'})
+        let imgUrl = cryptoRandomString({length: 6, type: 'alphanumeric'})
 
         // Save file in database
         let newImg = { url : imgUrl,
